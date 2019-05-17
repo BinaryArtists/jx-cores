@@ -2,13 +2,31 @@
   "name": "jx-core",
   "version": "0.1.0",
   "description": "java script core js",
-  "main": "index.js",
+  "main": "./dist/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "clean": "rm -rf dist",
+    "build": "npm run clean && NODE_ENV=production gulp build --gulpfile scripts/compiler.js",
+    "pub": "npm run build && tnpm publish"
   },
   "author": "fallenink",
   "license": "ISC",
   "dependencies": {
-    "jx-pattern": "^0.1.0"
+    "jx-pattern": "^0.1.0",
+    "jx-structs": "^0.1.0",
+    "jx-util": "^2.3.12"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.4.3",
+    "@babel/plugin-proposal-class-properties": "^7.4.4",
+    "@babel/preset-env": "^7.4.3",
+    "gulp": "^4.0.1",
+    "gulp-babel": "^8.0.0"
+  },
+  "files": [
+    "dist"
+  ],
+  "publishConfig": {
+    "registry": "https://registry.npm.alibaba-inc.com"
   }
 }
