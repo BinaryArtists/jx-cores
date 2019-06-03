@@ -1,13 +1,13 @@
 {
-  "name": "jx-core",
-  "version": "0.1.0",
+  "name": "jx-cores",
+  "version": "0.2.0",
   "description": "java script core js",
   "main": "./dist/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "clean": "rm -rf dist",
     "build": "npm run clean && NODE_ENV=production gulp build --gulpfile scripts/compiler.js",
-    "pub": "npm run build && tnpm publish"
+    "pub": "npm run build && npm publish"
   },
   "author": "fallenink",
   "license": "ISC",
@@ -27,6 +27,6 @@
     "dist"
   ],
   "publishConfig": {
-    "registry": "https://registry.npm.alibaba-inc.com"
+    "registry": "https://registry.npmjs.org/"
   }
 }

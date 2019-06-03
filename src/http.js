@@ -1,5 +1,3 @@
-// http 类型相关工具函数
-
 /*
     let url = 'http://demo.com/api'
     例: 

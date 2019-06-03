@@ -1,28 +1,18 @@
+import util from 'jx-util';
 
-var util = require('../../')
+class SignalBinding {
+  constructor (signal, listener, isOnce, context, priority) {
+    this.active = true;
+    this.params = null;
 
-function validateListener (listener, fnName) {
-  if (! util.is.function(listener)) {
-    throw new Error( 'listener is a required param of {fn}() and should be a Function.'.replace('{fn}', fnName) )
+    this._listener = listener;
+    this._isOnce = isOnce;
+    this.context = context;
+    this._signal = signal;
+    this._priority = priority || 0;
   }
-}
 
-// SignalBinding -------------------------------------------------
-//================================================================
-
-function SignalBinding(signal, listener, isOnce, context, priority) {
-  this._listener = listener
-  this._isOnce = isOnce
-  this.context = context
-  this._signal = signal
-  this._priority = priority || 0
-}
-
-SignalBinding.prototype = {
-  active : true,
-  params : null,
-
-  execute (paramsArr) {
+  execute(paramsArr) {
     var handlerReturn, params;
     if (this.active && !!this._listener) {
       params = this.params? this.params.concat(paramsArr) : paramsArr
@@ -32,59 +22,61 @@ SignalBinding.prototype = {
       }
     }
     return handlerReturn;
-  },
+  }
 
-  detach : function () {
+  detach() {
     return this.isBound()? this._signal.off(this._listener, this.context) : null
-  },
+  }
 
   /**
    * @return {Boolean} `true` if binding is still bound to the signal and have a listener.
    */
-  isBound : function () {
+  isBound() {
     return (!!this._signal && !!this._listener)
-  },
+  }
 
   /**
    * @return {boolean} If SignalBinding will only be executed once.
    */
-  isOnce : function () {
+  isOnce() {
     return this._isOnce
-  },
+  }
 
   /**
    * Delete instance properties
    * @private
    */
-  _destroy : function () {
+  _destroy() {
     delete this._signal
     delete this._listener
     delete this.context
   }
 }
 
-/**
- * @inspired http://millermedeiros.github.io/js-signals/
- * 
- * @desc 信号
- */
+export class Signal {
+  constructor () {
+    this._bindings = []
+    this._prevParams = null
 
-function Signal () {
-  this._bindings = []
-  this._prevParams = null
+    var self = this
+    this.dispatch = function () {
+      Signal.prototype.dispatch.apply(self, arguments)
+    }
 
-  var self = this
-  this.dispatch = function () {
-    Signal.prototype.dispatch.apply(self, arguments)
+    this._shouldPropagate = true // 事件传递
+
+    this.memorize = true // 保留最新信号值
+    this.active = true // 功能是否启用
   }
-}
 
-Signal.prototype = {
-  _shouldPropagate : true, // 事件传递
+  _validateListener (listener, fnName) {
+    if (! util.is.function(listener)) {
+      throw new Error( 'listener is a required param of {fn}() and should be a Function.'.replace('{fn}', fnName) )
+    }
+  }
 
   _registerListener (listener, isOnce, context, priority) {
-    var prevIndex = this._indexOfListener(listener, context),
-        binding;
+    var prevIndex = this._indexOfListener(listener, context), binding;
 
     if (prevIndex !== -1) {
       binding = this._bindings[prevIndex]
@@ -101,7 +93,7 @@ Signal.prototype = {
     }
 
     return binding
-  },
+  }
 
   /**
    * @param {SignalBinding} binding
@@ -112,7 +104,7 @@ Signal.prototype = {
     var n = this._bindings.length;
     do { --n; } while (this._bindings[n] && binding._priority <= this._bindings[n]._priority)
     this._bindings.splice(n + 1, 0, binding)
-  },
+  }
 
   /**
    * @param {Function} listener
@@ -129,30 +121,28 @@ Signal.prototype = {
       }
     }
     return -1
-  },
+  }
 
-  memorize : true, // 保留最新信号值
-  active : true, // 功能是否启用
-
+  
   /**
    * Check if listener was attached to Signal.
    */
   has (listener, context) {
     return this._indexOfListener(listener, context) !== -1
-  },
+  }
 
   on (listener, context, priority) {
-    validateListener(listener, 'on')
+    this._validateListener(listener, 'on')
     return this._registerListener(listener, false, context, priority)
-  },
+  }
 
   once (listener, context, priority) {
-    validateListener(listener, 'once');
+    this._validateListener(listener, 'once');
     return this._registerListener(listener, true, context, priority);
-  },
+  }
 
   off (listener, context) {
-    validateListener(listener, 'off');
+    this._validateListener(listener, 'off');
 
     var i = this._indexOfListener(listener, context);
     if (i !== -1) {
@@ -160,7 +150,7 @@ Signal.prototype = {
       this._bindings.splice(i, 1);
     }
     return listener
-  },
+  }
 
   offAll () {
     var n = this._bindings.length
@@ -168,12 +158,12 @@ Signal.prototype = {
       this._bindings[n]._destroy()
     }
     this._bindings.length = 0
-  },
+  }
 
   // 取消当前事件链传递
   halt () {
     this._shouldPropagate = false;
-  },
+  }
 
   send (params) {
     if (! this.active) {
@@ -199,11 +189,11 @@ Signal.prototype = {
     //execute all callbacks until end of the list or until a callback returns `false` or stops propagation
     //reverse loop since listeners with higher priority will be added at the end of the list
     do { n--; } while (bindings[n] && this._shouldPropagate && bindings[n].execute(paramsArr) !== false)
-  },
+  }
 
   forget () {
     this._prevParams = null
-  },
+  }
 
   dispose () {
     this.offAll()
@@ -214,12 +204,3 @@ Signal.prototype = {
     this.active = false
   }
 }
-
-// Namespace -----------------------------------------------------
-//================================================================
-
-var signals = Signal
-
-signals.Signal = Signal
-
-export signals
