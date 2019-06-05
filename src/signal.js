@@ -1,5 +1,10 @@
-import util from 'jx-util';
+function isFunction(fn) {
+  return fn instanceof Function;
+}
 
+/**
+ * 信号发送，一对多
+ */
 class SignalBinding {
   constructor (signal, listener, isOnce, context, priority) {
     this.active = true;
@@ -70,7 +75,7 @@ export class Signal {
   }
 
   _validateListener (listener, fnName) {
-    if (! util.is.function(listener)) {
+    if (! isFunction(listener)) {
       throw new Error( 'listener is a required param of {fn}() and should be a Function.'.replace('{fn}', fnName) )
     }
   }
@@ -165,7 +170,7 @@ export class Signal {
     this._shouldPropagate = false;
   }
 
-  send (params) {
+  send () {
     if (! this.active) {
       return
     }
@@ -183,8 +188,8 @@ export class Signal {
       return
     }
 
-    bindings = this._bindings.slice() //clone array in case add/remove items during dispatch
-    this._shouldPropagate = true //in case `halt` was called before dispatch or during the previous dispatch.
+    bindings = this._bindings.slice()
+    this._shouldPropagate = true
 
     //execute all callbacks until end of the list or until a callback returns `false` or stops propagation
     //reverse loop since listeners with higher priority will be added at the end of the list

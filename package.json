@@ -1,6 +1,6 @@
 {
   "name": "jx-cores",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "java script core js",
   "main": "./dist/index.js",
   "scripts": {
@@ -12,9 +12,7 @@
   "author": "fallenink",
   "license": "ISC",
   "dependencies": {
-    "jx-pattern": "^0.1.0",
-    "jx-structs": "^0.1.0",
-    "jx-util": "^2.3.12"
+    "jx-structs": "^0.1.0"
   },
   "devDependencies": {
     "@babel/core": "^7.4.3",
