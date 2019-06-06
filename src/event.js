@@ -14,12 +14,9 @@ function isArray(arr) {
   return arr instanceof Array;
 }
 
-class Events {
-  constructor ({
-    maxEventListNum
-  }) {
+export class Events {
+  constructor () {
     this.__eventList = {};
-    this.__maxEventListNum = maxEventListNum || 10;
   }
 
   on (eventName, content) {
@@ -43,19 +40,6 @@ class Events {
       ctx.push(content);
       ctx.ListenerCount = ctx.length;
     }
-
-    if (!ctx.maxed) {
-      if (isArray(ctx)) {
-        var len = ctx.length;
-        if (len > this.__maxEventListNum) {
-          ctx.maxed = true;
-          console.warn('events.MaxEventListNum || [ MaxEventListNum ] :The number of subscriptions exceeds the maximum, and if you do not set it, the default value is 10');
-        } else {
-          ctx.maxed = false;
-        }
-      }
-    }
-
   }
 
   emit (eventName, content) {
