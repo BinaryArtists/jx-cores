@@ -160,6 +160,6 @@ export class Events {
   }
 
   static install (S, options) {
-    S.prototype.$ev = new Events(options);
+    S.$ev = new Events(options);
   }
  }
