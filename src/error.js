@@ -63,7 +63,7 @@ export class BizErrorGroup {
 // 当前支付宝版本不支持某API的调用
 export class APINotSupportedError extends Error {
   constructor(api) {
-    super(`当前支付宝版本过低，无法使用${api ? api : '此功能'}，请升级最新版本的支付宝`)
+    super(`当前版本过低，无法使用${api ? api : '此功能'}，请升级`)
     this.name = "APINotSupportedError"
   }
 }

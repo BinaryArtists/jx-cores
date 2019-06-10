@@ -215,8 +215,7 @@ export class Assert {
     }
   }
 
-  static oneOf(value, expectedElements, message = "")
-  {
+  static oneOf(value, expectedElements, message = "") {
     this.string(message, "Custom error message passed to Assert.array needs to be a valid string.");
     this.array(expectedElements);
 
@@ -282,21 +281,21 @@ export class Assert {
   }
 
   static containsOnly(arrayValue, expectedInstance, message = "") {
-  this.array(arrayValue, "Assert.containsOnly require valid array, got \"${received}\".");
-  this.string(message, "Custom error message passed to Assert.containsOnly needs to be a valid string.");
+    this.array(arrayValue, "Assert.containsOnly require valid array, got \"${received}\".");
+    this.string(message, "Custom error message passed to Assert.containsOnly needs to be a valid string.");
 
-  for (let element of arrayValue) {
-    try {
-      this.instanceOf(element, expectedInstance, message);
-    } catch (error) {
-      throw expected(
-        expectedInstance.name,
-        element,
-        message.length ? message : "Expected instance of \"${expected}\" but got \"${received}\"."
-      );
+    for (let element of arrayValue) {
+      try {
+        this.instanceOf(element, expectedInstance, message);
+      } catch (error) {
+        throw expected(
+          expectedInstance.name,
+          element,
+          message.length ? message : "Expected instance of \"${expected}\" but got \"${received}\"."
+        );
+      }
     }
   }
-}
 
   static containsOnlyString(arrayValue, message = "") {
     this.array(arrayValue, "Assert.containsOnlyString require valid array, got \"${received}\".");
@@ -445,19 +444,5 @@ export class Assert {
     if (null ===  attribute) {
       throw expected(`html element with attribute "${attributeName}"`, htmlElement.outerHTML, message);
     }
-  }
-
-  static hasAttributes(attributes, htmlElement, message = "") {
-    this.containsOnlyString(attributes);
-    this.instanceOf(htmlElement, HTMLElement);
-    this.string(message, "Custom error message passed to Assert.hasAttributes needs to be a valid string.");
-
-    attributes.map((attribute) => {
-      try {
-        this.hasAttribute(attribute, htmlElement)
-      } catch (e) {
-        throw expected(`html element with attributes "${attributes.join(', ')}"`, htmlElement.outerHTML, message);
-      }
-    });
   }
 }
