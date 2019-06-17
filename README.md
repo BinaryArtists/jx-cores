@@ -49,6 +49,8 @@ async function asyncFunctionWithThrow() {
 
 ### 枚举
 
+* 也推荐：[adrai/enum](https://github.com/adrai/enum)
+
 ```
 import {BizEnum, BizEnumGroug} from 'jx-cores';
 
