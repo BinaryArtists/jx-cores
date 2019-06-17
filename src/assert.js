@@ -232,7 +232,7 @@ export class Assert {
     }
   }
 
-  static isFunction(functionValue, message = "") {
+  static function(functionValue, message = "") {
     this.string(message, "Custom error message passed to Assert.isFunction needs to be a valid string.");
 
     if (typeof functionValue !== 'function') {

@@ -1,29 +1,33 @@
-import { HashMap } from 'jx-structs';
-
 export class BizError extends Error {
-  constructor( err = -3.14, msg = '为定义错误', name = 'BizError') {
-    super(msg)
+  constructor( err = -3.14, msg = '未定义错误', name = '未知业务') {
+    super(msg);
 
-    this.err = err
-    this.msg = msg
-    this.name = name
+    this.err = err;
+    this.msg = msg;
+    this.name = name;
   }
 
   named (name) {
-    this.name = name
+    this.name = name;
+    return this;
   }
-
   err (err) { 
     this.err = err
-    return this
+    return this;
   }
   msg (msg) { 
-    this.msg = msg
-    return this 
+    this.msg = msg;
+    return this;
   }
 
-  is (str) {
-    return str == this.name
+  is (value) {
+    if (typeof value === 'number') {
+      return value == this.err
+    } else if (typeof value === 'string') {
+      return value == this.name
+    }
+
+    return false;
   }
 
   static Failure (err, msg) {
@@ -36,34 +40,8 @@ export class BizError extends Error {
 }
 
 /**
- * @desc 错误组合，用于模块内预定义错误，根据key自动匹配
+ * @desc api无法使用错误
+ * @param {string} apiname api名字
  */
-export class BizErrorGroup {
-  constructor () {
-    this.errors = new HashMap();
-
-    for (let arg of arguments) {
-      this.errors.put(arg.err, arg);
-    }
-  }
-
-  of (key) {
-    let err = this.errors.get(key);
-
-    if (!err) {
-      // 使用方未定义该错误
-      return new BizError();
-    }
-
-    return err;
-  }
-}
-
-
-// 当前支付宝版本不支持某API的调用
-export class APINotSupportedError extends Error {
-  constructor(api) {
-    super(`当前版本过低，无法使用${api ? api : '此功能'}，请升级`)
-    this.name = "APINotSupportedError"
-  }
-}
+export const APINotSupportedError = (apiname) => 
+  new BizError(-1000, `当前版本过低，无法使用${apiname ? apiname : '某功能'}，请升级`, 'APINotSupportedError');
