@@ -1,3 +1,7 @@
+无前缀：public
+_ 开头：protected
+__ 开头：private
+
 ### 断言
 
 ```
@@ -129,7 +133,13 @@ eventor.count('on.another.thing.happen'); // 0
 
 ### 日志打印
 
+#### 获取日志对象
+
 ```
+var logger = Logger.getLogger('首页')
+
+// So it's like
+[首页] ...
 ```
 
 ### Session

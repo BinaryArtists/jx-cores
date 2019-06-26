@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+</head>
+<body>
+  <script>var exports = {};</script>
+  <script type="text/javascript" src="../dist/logger.js"></script>
+  <script type="text/javascript">
+    var logger = Logger.getLogger('测试');
+
+    // 测试时间
+    logger.time('aaa');
+    logger.timeEnd('aaa');
+
+    // 表格打印
+    logger.table([{a:1},{b:1}]);
+
+    // 日志打印
+    logger.log(', d', ', a', ', b'); // debug
+    logger.info(', d', ', a', ', b'); // info
+    logger.warn(', d', ', a', ', b'); // warn
+    logger.error(', d', ', a', ', b'); // error
+
+
+    // 打印复杂对象
+    var obj1 = {
+      aaa: 1111,
+      bbb: {
+        ccc: {
+          ddddd: 222,
+          bbb: {
+            a: [],
+            b: 'dddddd',
+            c: true,
+            d: undefined,
+            e: null,
+            cccc: [
+              'dddddd', {
+                bbbb: 332
+              }
+            ]
+          }
+        }
+      }
+    };
+
+    logger.log(obj1, obj1, 'sfsadfwefsdf, sfawefs, fasfewfsaf');
+  </script>
+</body>
+</html>
