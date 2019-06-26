@@ -9,14 +9,40 @@ function merge (o, n) {
 }
 
 export class LoggerFormatter {
-  constructor () {
-    // 未做s
+  constructor (options) {
+    const defaultFormatterOptions = {
+      output: () => {
+        // Must return
+      }
+    }
+
+    // let { process } = options;
+    this.options = options;
+  }
+
+  process () {
+    
   }
 }
 
 // before / after
 export class LoggerIntercepter {
-  constructor () {
+  constructor (options) {
+    const defaultInterceptorOptions = {
+      before: () => {
+        // No return
+      },
+      after: () => {
+        // No return
+      }
+    }
+  }
+
+  before () {
+
+  }
+
+  after () {
     
   }
 }
@@ -34,6 +60,9 @@ export class Logger {
 
   constructor (options) {
     this.__config(options);
+
+    this.formatter = null;
+    this.intercepter = null;
   }
 
   __config (options) {
@@ -56,9 +85,18 @@ export class Logger {
     }
   }
 
-  // MARK: - 命名
-  nameMe (name) {
+  // MARK: - 设置
+
+  setName (name) {
     this.loggerName = name;
+  }
+
+  setFormatter (formatter) {
+    this.loggerFormatter = formatter;
+  }
+
+  setIntercepter (intercepter) {
+    this.loggerIntercepter = intercepter;
   }
 
   // MARK: - 计时功能
@@ -276,8 +314,9 @@ export class Logger {
 
   print (method, /** 其他参数 */...theArgs) { // 打印日志
     var args = Array.prototype.slice.apply(theArgs)
+    var output = this.pack(args);
 
-    this.delegate && this.delegate[method](this.pack(args));
+    this.delegate && this.delegate[method](output);
   }
   
   log () {
@@ -347,7 +386,7 @@ export class Logger {
 
   static getLogger (name) {
     let logger = new Logger(this.defaultOptions);
-    logger.nameMe(name);
+    logger.setName(name);
 
     return logger;
   }
