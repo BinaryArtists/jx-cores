@@ -8,6 +8,13 @@ function merge (o, n) {
   return o;
 }
 
+function getBox(width, height) {
+  return {
+    string: "+",
+    style: "font-size: 1px; padding: " + Math.floor(0) + "px " + Math.floor(width/2) + "px; line-height: " + height + "px;"
+  }
+}
+
 /**
  * 日志看门狗
  * 
@@ -199,7 +206,7 @@ export class Logger {
    * @param { defaultIndentation } options Hash with different options to configure the parser
    * @param {*} indentation Base indentation of the parsed output
    */
-  render (data, options, indentation) {
+  __render (data, options, indentation) {
     // Default values
     indentation = indentation || 0;
     options = options || {};
@@ -281,7 +288,7 @@ export class Logger {
           if(isSerializable(element)) {
             output.push(indent(indentation) + outputData(element) + ',');
           } else {
-            output.push(that.render(element, options, indentation) + ',');
+            output.push(that.__render(element, options, indentation) + ',');
           }
         });
         removeLastComma(output);
@@ -308,7 +315,7 @@ export class Logger {
         if(isSerializable(data[i])) {
           output.push(key + outputData(data[i]) + ',');
         }else {
-          var temp = that.render(data[i], options, indentation);
+          var temp = that.__render(data[i], options, indentation);
           output.push(key + temp.trim() + ',');
         }
       });
@@ -329,7 +336,7 @@ export class Logger {
    * @param {*} options 
    * @param {*} indentation 
    */
-  renderString(data, options, indentation) {
+  __renderString(data, options, indentation) {
     var originalData = data;
     var output = '';
     var parsedData;
@@ -362,11 +369,11 @@ export class Logger {
     }
     
     // Call the real render() method
-    output += this.render(parsedData, options, indentation);
+    output += this.__render(parsedData, options, indentation);
     return output;
   }
 
-  pack (args) /** : {} */ { // 打包日志内容
+  __pack (args) /** : {} */ { // 打包日志内容
     var output = this.loggerName? `[${this.loggerName}] ==> ` : '';
 
     /**  */
@@ -375,9 +382,9 @@ export class Logger {
       var curType = typeof data;
 
       if ('string' === curType) {
-        output += this.renderString(data);
+        output += this.__renderString(data);
       } else {
-        output += this.render(data);
+        output += this.__render(data);
       }
 
       if ('object' === curType) {
@@ -390,9 +397,9 @@ export class Logger {
     return output;
   }
 
-  print (method, /** 其他参数 */...theArgs) { // 打印日志
+  __print (method, /** 其他参数 */...theArgs) { // 打印日志
     var args = Array.prototype.slice.apply(theArgs)
-    var output = this.pack(args);
+    var output = this.__pack(args);
 
     // 日志过滤器
     let pass = false;
@@ -413,23 +420,47 @@ export class Logger {
   }
   
   log () {
-    this.print('debug', ...arguments);
+    this.__print('debug', ...arguments);
   }
 
   info () {
-    this.print('info', ...arguments);
+    this.__print('info', ...arguments);
   }
 
   warn () {
-    this.print('warn', ...arguments);
+    this.__print('warn', ...arguments);
   }
   
   error () {
-    this.print('error', ...arguments);
+    this.__print('error', ...arguments);
   }
 
   dir () {
     this.delegate && this.delegate['dir'](...arguments);
+  }
+
+  print () {
+    this.delegate && this.delegate('debug', ...arguments);
+  }
+
+  // 图片打印
+  // bug: 打印出了两张图
+
+  image (url, scale) {
+    scale = scale || 0.2;
+		var img = new Image();
+
+    let that = this;
+		img.onload = function() {
+      
+      var width = this.width * scale;
+      var height = this.height * scale;
+      var dim = getBox(width, height);
+      // that.delegate && that.delegate['log']("%c" + dim.string, dim.style + "background: url(" + url + "); background-size: " + (this.width * scale) + "px " + (this.height * scale) + "px; color: transparent;");
+      console.log("%c" + dim.string, dim.style + "background: url(" + url + "); background-size: " + (width) + "px " + (height) + "px; color: transparent; background-repeat: no-repeat;"
+      + `max-width: ${width}; max-height: ${height};`);
+		};
+		img.src = url;
   }
 
   // 分组打印
@@ -469,6 +500,35 @@ export class Logger {
 
   count () {
     this.delegate && this.delegate.count();
+  }
+
+  // 模块帮助
+
+  help () {
+    this.log({
+      1: {
+        title: "格式化输出",
+        content: [
+          "%s, 字符串",
+          "%d/%i, 整数",
+          "%f, 浮点数",
+          "%o/%O, Object对象",
+          "%c, css样式"
+        ]
+      },
+      2: {
+
+      },
+      3: {
+
+      },
+      4: {
+
+      },
+      5: {
+
+      }
+    })
   }
 
   // MARK: - 静态方法
