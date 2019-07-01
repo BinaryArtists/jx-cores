@@ -1,6 +1,6 @@
-无前缀：public
-_ 开头：protected
-__ 开头：private
+* 无前缀：public
+* _ 开头：protected
+* __ 开头：private
 
 ### 断言
 
