@@ -147,7 +147,7 @@ eventor.count('on.another.thing.happen'); // 0
 | 过滤器	| Filter| 提供了更细粒度的控制工具来决定输出哪条日志记录，丢弃哪条日志记录 |
 | 格式器	| Formatter	| 决定日志记录的最终输出格式 |
 
-#### 获取日志对象
+*使用说明*
 
 ```
 Logger.help() // 获取帮助文档
