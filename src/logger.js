@@ -14,13 +14,64 @@ function merge (o, n) {
  * 1. 全局日志缓存
  * 2. 全局日志行为记录
  */
+class __Log {
+  constructor (lvl, content) {
+    this.lvl = lvl;
+    this.content = content;
+  }
+}
 class __LoggerDogger {
+  constructor () {
+    this.logs = [];
+  }
+
+  add (lvl, content) {
+    this.logs.push(new __Log(lvl, content));
+  }
+
+  flush (numbers, lvl) {
+    let outputs = [];
+
+    for (var idx in this.logs) {
+      let log = this.logs[idx];
+      if (lvl) {
+        if (lvl === log.lvl) {
+          outputs.push(log.content);
+        }
+      } else {
+        outputs.push(log.content);
+      }
+    }
+
+    this.logs = [];
+
+    if (numbers) {
+      outputs.slice(0, numbers);
+    } else {
+      return outputs;
+    }
+  }
+}
+
+const loggerDogger = new __LoggerDogger();
+
+/**
+ * 日志处理器
+ */
+export class LoggerHandler {
   constructor () {
 
   }
 }
 
-const loggerDogger = new __LoggerDogger();
+/**
+ * 日志过滤器
+ */
+export class LoggerFilter {
+  constructor () {
+
+  }
+}
 
 /**
  * 日志格式化
@@ -73,6 +124,12 @@ export class LoggerIntercepter {
 // dir() 查看对象的所有属性和方法 [x]
 // group() groupEnd() 分组打印, 需要连续打印 [x]
 export class Logger {
+  static Level = {
+    DEBUG: 'debug',
+    INFO: 'info',
+    WARN: 'warn',
+    ERROR: 'error'
+  }
   static defaultOptions = {
     enabledLogging: true, // 打开日志打印
     enabledGroup: true,  // 打开分组打印，该选项生效
@@ -110,15 +167,23 @@ export class Logger {
     this.loggerName = name;
   }
 
+  setHandler (handler) {
+    this.loggerHandler = handler;
+  }
+
+  setFilter (filter) {
+    this.loggerFilter = filter;
+  }
+
   setFormatter (formatter) {
     this.loggerFormatter = formatter;
   }
 
-  setIntercepter (intercepter) {
-    if (!this.loggerIntercepter) this.loggerIntercepter = [];
+  // setIntercepter (intercepter) {
+  //   if (!this.loggerIntercepter) this.loggerIntercepter = [];
 
-    this.loggerIntercepter.push(intercepter);
-  }
+  //   this.loggerIntercepter.push(intercepter);
+  // }
 
   // MARK: - 计时功能
   time (tag) {
@@ -330,8 +395,6 @@ export class Logger {
     var args = Array.prototype.slice.apply(theArgs)
     var output = this.pack(args);
 
-    
-
     this.delegate && this.delegate[method](output);
   }
   
@@ -376,12 +439,8 @@ export class Logger {
 
   // MARK: - 日志缓存输出
 
-  capture (numbers) { // 返回前numbers个日志
-
-  }
-
-  flush () { // 返回所有日志，并清空缓存
-
+  flush (numbers, lvl) { // 返回所有日志，并清空缓存
+    return loggerDogger.flush(numbers, lvl);
   }
 
   // MARK: - 性能分析
