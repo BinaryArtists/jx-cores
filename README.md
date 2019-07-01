@@ -37,7 +37,8 @@ Assert.array(value, msg);
 Assert.function(value, msg);
 ```
 
-### 降维 Promise.then().catch() => [err, res]
+降维 Promise.then().catch() => [err, res]
+---
 
 *告别回调函数*
 
@@ -49,11 +50,13 @@ async function asyncFunctionWithThrow() {
  }
 ```
 
-### Cookie
+Cookie
+---
 
 小程序不可用
 
-### 枚举
+枚举
+---
 
 * 也推荐：[adrai/enum](https://github.com/adrai/enum)
 
@@ -80,7 +83,8 @@ if (sex) {
 }
 ```
 
-### 错误
+错误
+---
 
 ```
 import {BizError} from 'jx-cores';
@@ -99,7 +103,8 @@ BizError.Failure(2001, "支付密码错误，请输入正确的密码", "支付"
 // { err: 2001, msg: "支付密码错误，请输入正确的密码", name: "支付"}
 ```
 
-## 事件
+事件
+---
 
 ```
 import {Event} from 'jx-cores';
@@ -129,11 +134,13 @@ eventor.offAll('on.another.thing.happen');
 eventor.count('on.another.thing.happen'); // 0
 ```
 
-### Ajax 
+Ajax 
+---
 
 小程序不可用
 
-### 日志打印
+日志
+---
 
 *基本功能*
 
@@ -204,12 +211,14 @@ Logger.help() // 获取帮助文档
 }
 ```
 
-### Session
+Session
+---
 
 小程序不可用
 
 
-### 信号
+信号
+---
 
 ```
 import {Signal} from 'jx-cores';
@@ -234,6 +243,7 @@ moduleIntializedSignal.on(function (data) {
 moduleIntializedSignal.dispose(); // 信号结束
 ```
 
-### Storage
+Storage
+---
 
 小程序不可用
