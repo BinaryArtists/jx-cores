@@ -568,6 +568,7 @@ export class Logger {
         'logger.timeEnd(\'aaa\');'
       ],
       '表格打印': 'logger.table([{a:1},{b:1}]);',
+      '图片打印': 'logger.image("http://pic16.nipic.com/20110926/6333052_165902361105_2.jpg")',
       '日志打印': [
         'logger.log(\', d\', \', a\', \', b\');',
         'logger.info(\', d\', \', a\', \', b\');',
@@ -580,7 +581,7 @@ export class Logger {
       ],
       '日志过滤': [
         'logger.setFilter(new LoggerFilter({',
-        '  filter: (lvl, content) => {',
+        '  filter: (lvl, outputs) => {',
         '    if (lvl === Logger.Level.WARN) return true;',
         '    return false;',
         '  }',
@@ -595,8 +596,8 @@ export class Logger {
       ],
       '日志格式化': [
         'logger.setFormatter(new LoggerFormatter({',
-        '  format: (lvl, content) => {',
-        '    return `已达标, ${content}`;',
+        '  format: (lvl, outputs) => {',
+        '    return `已达标, ${outputs}`;',
         '  }',
         '}))'
       ],
@@ -618,8 +619,10 @@ export class Logger {
 		}
   }
 
-  static getLogger (name) {
-    let logger = contextualLoggersByNameMap[name] || (contextualLoggersByNameMap[name] = new Logger(merge(this.defaultOptions, {name})));
+  static getLogger (name, options) {
+    options = options || {};
+    options.name = name;
+    let logger = contextualLoggersByNameMap[name] || (contextualLoggersByNameMap[name] = new Logger(merge(this.defaultOptions, options)));
 
     return logger;
   }

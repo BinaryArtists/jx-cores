@@ -150,10 +150,56 @@ eventor.count('on.another.thing.happen'); // 0
 #### 获取日志对象
 
 ```
-var logger = Logger.getLogger('首页')
+Logger.help() // 获取帮助文档
 
-// So it's like
-[首页] ...
+{
+  "获取日志对象": "Logger.getLogger('测试')",
+  "测试时间": [
+    "logger.time('aaa');",
+    "logger.timeEnd('aaa');"
+  ],
+  "表格打印": "logger.table([{a:1},{b:1}]);",
+  "图片打印": "logger.image("http://pic16.nipic.com/20110926/6333052_165902361105_2.jpg")",
+  "日志打印": [
+    "logger.log(', d', ', a', ', b');",
+    "logger.info(', d', ', a', ', b');",
+    "logger.warn(', d', ', a', ', b');",
+    "logger.error(', d', ', a', ', b');"
+  ],
+  "日志导出": [
+    "var logs = logger.flush(2);",
+    "console.log(logs);"
+  ],
+  "日志过滤": [
+    "logger.setFilter(new LoggerFilter({",
+    "  filter: (lvl, outputs) => {",
+    "    if (lvl === Logger.Level.WARN) return true;",
+    "    return false;",
+    "  }",
+    "}));"
+  ],
+  "日志处理": [
+    "logger.setHandler(new LoggerHandler({",
+    "  handle: (lvl)=> {",
+    "    console.log(`收到日志： ${lvl}`)",
+    "  }",
+    "}));"
+  ],
+  "日志格式化": [
+    "logger.setFormatter(new LoggerFormatter({",
+    "  format: (lvl, outputs) => {",
+    "    return `已达标, ${outputs}`;",
+    "  }",
+    "}))"
+  ],
+  "格式化输出(不支持object)": [
+    "%s, 字符串",
+    "%d/%i, 整数",
+    "%f, 浮点数",
+    "%o/%O, Object对象",
+    "%c, css样式"
+  ]
+}
 ```
 
 ### Session
