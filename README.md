@@ -2,7 +2,9 @@
 * _ 开头：protected
 * __ 开头：private
 
-### 断言
+
+断言
+---
 
 ```
 import {Assert} from 'jx-cores';
