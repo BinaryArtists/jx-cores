@@ -138,7 +138,6 @@ eventor.count('on.another.thing.happen'); // 0
 * 日志级别
 * 模块信息、字段信息与格式
 
-
 *重要组件*
 
 | 组件名称 | 对应类名 | 功能描述 |

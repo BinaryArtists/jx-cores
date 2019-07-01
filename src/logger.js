@@ -25,6 +25,10 @@ class __LoggerDogger {
     this.logs = [];
   }
 
+  setCacheRollingNumbers (numbers) {
+    this.cacheRollingNumbers = numbers;
+  }
+
   add (lvl, content) {
     this.logs.push(new __Log(lvl, content));
   }
@@ -46,7 +50,7 @@ class __LoggerDogger {
     this.logs = [];
 
     if (numbers) {
-      outputs.slice(0, numbers);
+      return outputs.slice(0, numbers);
     } else {
       return outputs;
     }
@@ -59,8 +63,12 @@ const loggerDogger = new __LoggerDogger();
  * 日志处理器
  */
 export class LoggerHandler {
-  constructor () {
+  constructor (options) {
+    this.func = options.handle;
+  }
 
+  handle (lvl, content) {
+    this.func(lvl, content);
   }
 }
 
@@ -68,8 +76,12 @@ export class LoggerHandler {
  * 日志过滤器
  */
 export class LoggerFilter {
-  constructor () {
+  constructor (options) {
+    this.func = options.filter;
+  }
 
+  filter (lvl, content) {
+    this.func(lvl, content);
   }
 }
 
@@ -78,18 +90,11 @@ export class LoggerFilter {
  */
 export class LoggerFormatter {
   constructor (options) {
-    const defaultFormatterOptions = {
-      output: () => {
-        // Must return
-      }
-    }
-
-    // let { process } = options;
-    this.options = options;
+    this.func = options.format;
   }
 
-  process () {
-    
+  format (lvl, content) {
+    return this.func(lvl, content);
   }
 }
 
@@ -149,11 +154,9 @@ export class Logger {
       cacheRollingNumbers, 
     } = options;
 
-    if (enabledCache) {
-      this.cache = [];
-      if (cacheRollingNumbers) {
-        this.cacheMax = cacheRollingNumbers;
-      }
+    this.enabledCache = enabledCache;
+    if (this.enabledCache) {
+      loggerDogger.setCacheRollingNumbers(cacheRollingNumbers);
     }
 
     if (enabledLogging) {
@@ -178,12 +181,6 @@ export class Logger {
   setFormatter (formatter) {
     this.loggerFormatter = formatter;
   }
-
-  // setIntercepter (intercepter) {
-  //   if (!this.loggerIntercepter) this.loggerIntercepter = [];
-
-  //   this.loggerIntercepter.push(intercepter);
-  // }
 
   // MARK: - 计时功能
   time (tag) {
@@ -317,6 +314,8 @@ export class Logger {
       });
       removeLastComma(output);
       output.push(line + '},');
+    } else if (data === undefined) {
+      output.push(`${indent(indentation)}${data}\n`)
     }
     removeLastComma(output);
     // Return all the lines as a string
@@ -395,7 +394,22 @@ export class Logger {
     var args = Array.prototype.slice.apply(theArgs)
     var output = this.pack(args);
 
+    // 日志过滤器
+    let pass = false;
+    this.loggerFilter && (pass = this.loggerFilter.filter(method, output));
+    if (pass) return;
+
+    // 日志格式化
+    this.loggerFormatter && (output = this.loggerFormatter.format(method, output))
+
+    // 日志输出
     this.delegate && this.delegate[method](output);
+
+    // 日志处理器
+    this.loggerHandler && this.loggerHandler.handle(method, output);
+    
+    // 日志入缓存
+    this.enabledCache && loggerDogger.add(method, output);
   }
   
   log () {

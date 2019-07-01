@@ -47,7 +47,49 @@
 
     logger.log(obj1, obj1, 'sfsadfwefsdf, sfawefs, fasfewfsaf');
 
+    logger.log([
+      {a: 1, b: 3, c: { e: 1}},
+      10,
+      "333333",
+      false,
+      null,
+      undefined,
+      2.2222
+    ]);
+
     logger.log(JSON.stringify(obj1));
+
+    // 日志导出
+    var logs = logger.flush(2);
+    console.log(logs);
+
+    // 日志过滤器
+    logger.setFilter(new LoggerFilter({
+      filter: (lvl, content) => {
+        if (lvl === Logger.Level.WARN) return true;
+
+        return false;
+      }
+    }));
+
+    // 日志格式化
+    logger.setFormatter(new LoggerFormatter({
+      format: (lvl, content) => {
+        return `已达标, ${content}`;
+      }
+    }))
+
+    // 日志处理器
+    logger.setHandler(new LoggerHandler({
+      handle: (lvl)=> {
+        console.log(`收到日志： ${lvl}`)
+      }
+    }));
+
+    logger.log(', d', ', a', ', b'); // debug
+    logger.info(', d', ', a', ', b'); // info
+    logger.warn(', d', ', a', ', b'); // warn
+    logger.error(', d', ', a', ', b'); // error
   </script>
 </body>
 </html>

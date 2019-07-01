@@ -1,6 +1,6 @@
 {
   "name": "jx-cores",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "java script core js",
   "main": "./dist/index.js",
   "scripts": {
