@@ -8,6 +8,23 @@ function merge (o, n) {
   return o;
 }
 
+/**
+ * 日志看门狗
+ * 
+ * 1. 全局日志缓存
+ * 2. 全局日志行为记录
+ */
+class __LoggerDogger {
+  constructor () {
+
+  }
+}
+
+const loggerDogger = new __LoggerDogger();
+
+/**
+ * 日志格式化
+ */
 export class LoggerFormatter {
   constructor (options) {
     const defaultFormatterOptions = {
@@ -25,7 +42,9 @@ export class LoggerFormatter {
   }
 }
 
-// before / after
+/**
+ * 日志拦截器
+ */
 export class LoggerIntercepter {
   constructor (options) {
     const defaultInterceptorOptions = {
@@ -43,26 +62,26 @@ export class LoggerIntercepter {
   }
 
   after () {
-    
+
   }
 }
 
+/**
+ * 日志
+ */
 // export class Logger
 // dir() 查看对象的所有属性和方法 [x]
 // group() groupEnd() 分组打印, 需要连续打印 [x]
 export class Logger {
   static defaultOptions = {
     enabledLogging: true, // 打开日志打印
-    enabledGroup: true, 
+    enabledGroup: true,  // 打开分组打印，该选项生效
     enabledCache: true, // 打开日志缓存
     cacheRollingNumbers: -1, // 在日志缓存有效时，循环存储数目
   };
 
   constructor (options) {
     this.__config(options);
-
-    this.formatter = null;
-    this.intercepter = null;
   }
 
   __config (options) {
@@ -96,7 +115,9 @@ export class Logger {
   }
 
   setIntercepter (intercepter) {
-    this.loggerIntercepter = intercepter;
+    if (!this.loggerIntercepter) this.loggerIntercepter = [];
+
+    this.loggerIntercepter.push(intercepter);
   }
 
   // MARK: - 计时功能
@@ -109,19 +130,13 @@ export class Logger {
 
   // MARK: - 日志功能
 
-  // ### Render function
-  // *Parameters:*
-  //
-  // * **`data`**: Data to render
-  // * **`options`**: Hash with different options to configure the parser
-  // * **`indentation`**: Base indentation of the parsed output
-  //
-  // *Example of options hash:*
-  //
-  //     {
-  //       defaultIndentation: 2     // Indentation on nested objects
-  //     }
-  // prettyjson.render(app)
+  /**
+   * 渲染对象
+   * 
+   * @param {*} data Data to render
+   * @param { defaultIndentation } options Hash with different options to configure the parser
+   * @param {*} indentation Base indentation of the parsed output
+   */
   render (data, options, indentation) {
     // Default values
     indentation = indentation || 0;
@@ -243,20 +258,15 @@ export class Logger {
     return output.join('\n');
   }
 
-  // ### Render from string function
-  // *Parameters:*
-  //
-  // * **`data`**: Data to render as a string
-  // * **`options`**: Hash with different options to configure the parser
-  // * **`indentation`**: Base indentation of the parsed output
-  //
-  // *Example of options hash:*
-  //
-  //     {
-  //       defaultIndentation: 2     // Indentation on nested objects
-  //     }
+  /**
+   * 结构化渲染字符串
+   * 
+   * @param {*} data 
+   * @param {*} options 
+   * @param {*} indentation 
+   */
   renderString(data, options, indentation) {
-    
+    var originalData = data;
     var output = '';
     var parsedData;
     // If the input is not a string or if it's empty, just return an empty string
@@ -283,8 +293,8 @@ export class Logger {
     try {
       parsedData = JSON.parse(data);
     } catch (e) {
-      // Return an error in case of an invalid JSON
-      return 'Error:' + ' Not valid JSON!';
+      // Return orginal string
+      return originalData;
     }
     
     // Call the real render() method
@@ -300,7 +310,11 @@ export class Logger {
       var data = args[idx]
       var curType = typeof data;
 
-      output += this.render(data);
+      if ('string' === curType) {
+        output += this.renderString(data);
+      } else {
+        output += this.render(data);
+      }
 
       if ('object' === curType) {
         output += '\n' // [] {} 加换行
@@ -315,6 +329,8 @@ export class Logger {
   print (method, /** 其他参数 */...theArgs) { // 打印日志
     var args = Array.prototype.slice.apply(theArgs)
     var output = this.pack(args);
+
+    
 
     this.delegate && this.delegate[method](output);
   }
