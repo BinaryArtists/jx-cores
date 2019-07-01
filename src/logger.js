@@ -8,6 +8,10 @@ function merge (o, n) {
   return o;
 }
 
+var defineLogLevel = function(value, name) {
+  return { value: value, name: name };
+};
+
 function getBox(width, height) {
   return {
     string: "+",
@@ -136,17 +140,20 @@ export class LoggerIntercepter {
 // dir() 查看对象的所有属性和方法 [x]
 // group() groupEnd() 分组打印, 需要连续打印 [x]
 export class Logger {
-  static Level = {
-    DEBUG: 'debug',
-    INFO: 'info',
-    WARN: 'warn',
-    ERROR: 'error'
-  }
+  static TRACE = defineLogLevel(1, 'trace');
+  static DEBUG = defineLogLevel(2, 'debug');
+  static INFO = defineLogLevel(3, 'info');
+  static TIME = defineLogLevel(4, 'time');
+  static WARN = defineLogLevel(5, 'warn');
+  static ERROR = defineLogLevel(9, 'error');
+  static OFF = defineLogLevel(99, 'off');
+
   static defaultOptions = {
     enabledLogging: true, // 打开日志打印
     enabledGroup: true,  // 打开分组打印，该选项生效
     enabledCache: true, // 打开日志缓存
     cacheRollingNumbers: -1, // 在日志缓存有效时，循环存储数目
+    filterLevel: defineLogLevel(2, 'debug')
   };
 
   constructor (options) {
@@ -158,7 +165,8 @@ export class Logger {
       enabledLogging, 
       enabledGroup,
       enabledCache, 
-      cacheRollingNumbers, 
+      cacheRollingNumbers,
+      filterLevel,
     } = options;
 
     this.enabledCache = enabledCache;
@@ -169,12 +177,23 @@ export class Logger {
     if (enabledLogging) {
       this.delegate = console;
     }
+
+    this.loggerFilterLevel = filterLevel;
+  }
+
+  __enabledFor (lvl) {
+    var filterLevel = this.loggerFilterLevel;
+    return lvl.value >= filterLevel.value;
   }
 
   // MARK: - 设置
 
   setName (name) {
     this.loggerName = name;
+  }
+
+  setLevel (lvl) {
+    this.loggerFilterLevel = lvl;
   }
 
   setHandler (handler) {
@@ -190,11 +209,18 @@ export class Logger {
   }
 
   // MARK: - 计时功能
-  time (tag) {
-    this.delegate && this.delegate.time(tag);
+
+  time (label) {
+    if (!this.__enabledFor(Logger.TIME)) return;
+
+    if (typeof label === 'string' && label.length > 0)
+      this.delegate && this.delegate.time(tag);
   }
-  timeEnd (tag) {
-    this.delegate && this.delegate.timeEnd(tag);
+  timeEnd (label) {
+    if (!this.__enabledFor(Logger.TIME)) return;
+
+    if (typeof label === 'string' && label.length > 0)
+      this.delegate && this.delegate.timeEnd(label);
   }
 
   // MARK: - 日志功能
@@ -397,42 +423,44 @@ export class Logger {
     return output;
   }
 
-  __print (method, /** 其他参数 */...theArgs) { // 打印日志
+  __print (lvl, /** 其他参数 */...theArgs) { // 打印日志
+    if (!this.__enabledFor(lvl)) return;
+
     var args = Array.prototype.slice.apply(theArgs)
     var output = this.__pack(args);
 
     // 日志过滤器
     let pass = false;
-    this.loggerFilter && (pass = this.loggerFilter.filter(method, output));
+    this.loggerFilter && (pass = this.loggerFilter.filter(lvl, output));
     if (pass) return;
 
     // 日志格式化
-    this.loggerFormatter && (output = this.loggerFormatter.format(method, output))
+    this.loggerFormatter && (output = this.loggerFormatter.format(lvl, output))
 
     // 日志输出
-    this.delegate && this.delegate[method](output);
+    this.delegate && this.delegate[lvl](output);
 
     // 日志处理器
-    this.loggerHandler && this.loggerHandler.handle(method, output);
+    this.loggerHandler && this.loggerHandler.handle(lvl, output);
     
     // 日志入缓存
-    this.enabledCache && loggerDogger.add(method, output);
+    this.enabledCache && loggerDogger.add(lvl, output);
   }
   
   log () {
-    this.__print('debug', ...arguments);
+    this.__print(Logger.DEBUG, ...arguments);
   }
 
   info () {
-    this.__print('info', ...arguments);
+    this.__print(Logger.INFO, ...arguments);
   }
 
   warn () {
-    this.__print('warn', ...arguments);
+    this.__print(Logger.WARN, ...arguments);
   }
   
   error () {
-    this.__print('error', ...arguments);
+    this.__print(Logger.ERROR, ...arguments);
   }
 
   dir () {
@@ -440,7 +468,7 @@ export class Logger {
   }
 
   print () {
-    this.delegate && this.delegate('debug', ...arguments);
+    this.delegate && this.delegate(Logger.ERROR, ...arguments);
   }
 
   // 图片打印
