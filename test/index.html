@@ -7,6 +7,8 @@
   <script>var exports = {};</script>
   <script type="text/javascript" src="../dist/logger.js"></script>
   <script type="text/javascript">
+    Logger.help()
+
     var logger = Logger.getLogger('测试');
 
     // 测试时间
@@ -22,6 +24,7 @@
     logger.warn(', d', ', a', ', b'); // warn
     logger.error(', d', ', a', ', b'); // error
 
+    // 格式化输出：不支持
     logger.log('%d + %d = %d', 1, 1, 2);
     console.log('%o', {a:1,b:{d:1}})
 
@@ -65,7 +68,7 @@
     var logs = logger.flush(2);
     console.log(logs);
 
-    // 日志过滤器
+    // 日志过滤
     logger.setFilter(new LoggerFilter({
       filter: (lvl, content) => {
         if (lvl === Logger.Level.WARN) return true;
@@ -81,7 +84,7 @@
       }
     }))
 
-    // 日志处理器
+    // 日志处理
     logger.setHandler(new LoggerHandler({
       handle: (lvl)=> {
         console.log(`收到日志： ${lvl}`)
@@ -94,6 +97,8 @@
     logger.error(', d', ', a', ', b'); // error
 
     logger.image("http://pic16.nipic.com/20110926/6333052_165902361105_2.jpg")
+
+    console.log("%c这是一个%c神奇的%c网站", "color:black", "color:red", "color:yellow")
   </script>
 </body>
 </html>

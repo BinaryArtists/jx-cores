@@ -504,30 +504,54 @@ export class Logger {
 
   // 模块帮助
 
-  help () {
-    this.log({
-      1: {
-        title: "格式化输出",
-        content: [
-          "%s, 字符串",
-          "%d/%i, 整数",
-          "%f, 浮点数",
-          "%o/%O, Object对象",
-          "%c, css样式"
-        ]
-      },
-      2: {
-
-      },
-      3: {
-
-      },
-      4: {
-
-      },
-      5: {
-
-      }
+  static help () {
+    var logger = Logger.getLogger("")
+    logger.log({
+      "获取日志对象": 'Logger.getLogger(\'测试\')',
+      "测试时间": [
+        'logger.time(\'aaa\');',
+        'logger.timeEnd(\'aaa\');'
+      ],
+      '表格打印': 'logger.table([{a:1},{b:1}]);',
+      '日志打印': [
+        'logger.log(\', d\', \', a\', \', b\');',
+        'logger.info(\', d\', \', a\', \', b\');',
+        'logger.warn(\', d\', \', a\', \', b\');',
+        'logger.error(\', d\', \', a\', \', b\');' 
+      ],
+      '日志导出': [
+        'var logs = logger.flush(2);',
+        'console.log(logs);'
+      ],
+      '日志过滤': [
+        'logger.setFilter(new LoggerFilter({',
+        '  filter: (lvl, content) => {',
+        '    if (lvl === Logger.Level.WARN) return true;',
+        '    return false;',
+        '  }',
+        '}));'
+      ],
+      '日志处理': [
+        'logger.setHandler(new LoggerHandler({',
+        '  handle: (lvl)=> {',
+        '    console.log(`收到日志： ${lvl}`)',
+        '  }',
+        '}));'
+      ],
+      '日志格式化': [
+        'logger.setFormatter(new LoggerFormatter({',
+        '  format: (lvl, content) => {',
+        '    return `已达标, ${content}`;',
+        '  }',
+        '}))'
+      ],
+      "格式化输出(不支持)": [
+        "%s, 字符串",
+        "%d/%i, 整数",
+        "%f, 浮点数",
+        "%o/%O, Object对象",
+        "%c, css样式"
+      ],
     })
   }
 
