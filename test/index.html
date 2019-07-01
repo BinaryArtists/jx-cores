@@ -26,6 +26,7 @@
 
     // 格式化输出：不支持
     logger.log('%d + %d = %d', 1, 1, 2);
+    console.log('%d + %d = %d', 1, 1, 2);
     console.log('%o', {a:1,b:{d:1}})
 
     // 打印复杂对象
@@ -80,7 +81,7 @@
     // 日志格式化
     logger.setFormatter(new LoggerFormatter({
       format: (lvl, outputs) => {
-        outputs.unshift('已达标, ')
+        outputs.unshift(new Date().toUTCString())
         // return `已达标, ${content}`;
         return outputs;
       }
@@ -97,6 +98,16 @@
     logger.info(', d', ', a', ', b'); // info
     logger.warn(', d', ', a', ', b'); // warn
     logger.error(', d', ', a', ', b'); // error
+
+    var a = function () {
+      logger.trace();
+    }
+    var f = function () {
+      a()
+    }
+
+    f();
+    
 
     logger.image("http://pic16.nipic.com/20110926/6333052_165902361105_2.jpg")
 

@@ -1,3 +1,9 @@
+var bind = function(scope, func) {
+  return function() {
+    return func.apply(scope, arguments);
+  };
+};
+
 function merge (o, n) {
   if (!o) o = {};
   for (var p in n) {
@@ -69,6 +75,7 @@ class __LoggerDogger {
 }
 
 const loggerDogger = new __LoggerDogger();
+const contextualLoggersByNameMap = {};
 
 /**
  * 日志处理器
@@ -78,8 +85,8 @@ export class LoggerHandler {
     this.func = options.handle;
   }
 
-  handle (lvl, content) {
-    this.func(lvl, content);
+  handle (lvl, outputs) {
+    this.func(lvl, outputs);
   }
 }
 
@@ -91,8 +98,8 @@ export class LoggerFilter {
     this.func = options.filter;
   }
 
-  filter (lvl, content) {
-    this.func(lvl, content);
+  filter (lvl, outputs) {
+    this.func(lvl, outputs);
   }
 }
 
@@ -104,8 +111,8 @@ export class LoggerFormatter {
     this.func = options.format;
   }
 
-  format (lvl, content) {
-    return this.func(lvl, content);
+  format (lvl, outputs) {
+    return this.func(lvl, outputs);
   }
 }
 
@@ -153,7 +160,8 @@ export class Logger {
     enabledGroup: true,  // 打开分组打印，该选项生效
     enabledCache: true, // 打开日志缓存
     cacheRollingNumbers: -1, // 在日志缓存有效时，循环存储数目
-    filterLevel: defineLogLevel(2, 'debug')
+    filterLevel: Logger.TRACE,
+    name: null
   };
 
   constructor (options) {
@@ -167,6 +175,7 @@ export class Logger {
       enabledCache, 
       cacheRollingNumbers,
       filterLevel,
+      name,
     } = options;
 
     this.enabledCache = enabledCache;
@@ -179,6 +188,7 @@ export class Logger {
     }
 
     this.loggerFilterLevel = filterLevel;
+    this.loggerName = name
   }
 
   __enabledFor (lvl) {
@@ -187,10 +197,6 @@ export class Logger {
   }
 
   // MARK: - 设置
-
-  setName (name) {
-    this.loggerName = name;
-  }
 
   setLevel (lvl) {
     this.loggerFilterLevel = lvl;
@@ -400,7 +406,7 @@ export class Logger {
   }
 
   __pack (args) /** : {} */ { // 打包日志内容
-    var outputs = this.loggerName? [`[${this.loggerName}] ==> `] : [];
+    var outputs = [];
 
     /**  */
     for (var idx in args) {
@@ -425,6 +431,22 @@ export class Logger {
     return outputs;
   }
 
+  __packLoggerLabel (outputs) {
+    if (!this.loggerName) return outputs;
+
+    let loggerLabel = `[${this.loggerName}] ==> `;
+
+    if (outputs.length === 0) {
+      
+      outputs.unshift(loggerLabel)
+    } else if (outputs.length > 0 && typeof outputs[0] === 'string') {
+      // 合并 outputs[0] & label
+      outputs[0] = loggerLabel + outputs[0]
+    }
+
+    return outputs;
+  }
+
   __print (lvl, /** 其他参数 */...theArgs) { // 打印日志
     if (!this.__enabledFor(lvl)) return;
 
@@ -439,6 +461,9 @@ export class Logger {
     // 日志格式化
     this.loggerFormatter && (outputs = this.loggerFormatter.format(lvl, outputs))
 
+    // 日志打标签
+    outputs = this.__packLoggerLabel(outputs)
+
     // 日志输出
     this.delegate && this.delegate[lvl.name](...outputs);
 
@@ -447,6 +472,10 @@ export class Logger {
     
     // 日志入缓存
     this.enabledCache && loggerDogger.add(lvl, outputs);
+  }
+
+  trace () {
+    this.__print(Logger.TRACE, ...arguments);
   }
   
   log () {
@@ -508,10 +537,6 @@ export class Logger {
     this.delegate && this.delegate.table(arguments)
   }
 
-  // MAKR: - 日志拦截器
-
-
-
   // MARK: - 日志缓存输出
 
   flush (numbers, lvl) { // 返回所有日志，并清空缓存
@@ -532,7 +557,7 @@ export class Logger {
     this.delegate && this.delegate.count();
   }
 
-  // 模块帮助
+  // MARK: - 静态方法
 
   static help () {
     var logger = Logger.getLogger("")
@@ -585,11 +610,16 @@ export class Logger {
     })
   }
 
-  // MARK: - 静态方法
+  static setLevel (lvl) {
+    for (var key in contextualLoggersByNameMap) {
+			if (contextualLoggersByNameMap.hasOwnProperty(key)) {
+				contextualLoggersByNameMap[key].setLevel(lvl);
+			}
+		}
+  }
 
   static getLogger (name) {
-    let logger = new Logger(this.defaultOptions);
-    logger.setName(name);
+    let logger = contextualLoggersByNameMap[name] || (contextualLoggersByNameMap[name] = new Logger(merge(this.defaultOptions, {name})));
 
     return logger;
   }
