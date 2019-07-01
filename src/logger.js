@@ -214,7 +214,7 @@ export class Logger {
     if (!this.__enabledFor(Logger.TIME)) return;
 
     if (typeof label === 'string' && label.length > 0)
-      this.delegate && this.delegate.time(tag);
+      this.delegate && this.delegate.time(label);
   }
   timeEnd (label) {
     if (!this.__enabledFor(Logger.TIME)) return;
@@ -400,7 +400,7 @@ export class Logger {
   }
 
   __pack (args) /** : {} */ { // 打包日志内容
-    var output = this.loggerName? `[${this.loggerName}] ==> ` : '';
+    var outputs = this.loggerName? [`[${this.loggerName}] ==> `] : [];
 
     /**  */
     for (var idx in args) {
@@ -408,43 +408,45 @@ export class Logger {
       var curType = typeof data;
 
       if ('string' === curType) {
-        output += this.__renderString(data);
+        outputs.push(this.__renderString(data));
+      } else if ('object' === curType || 'array' === curType) {
+        outputs.push(this.__render(data)+'\n');
       } else {
-        output += this.__render(data);
+        outputs.push(data)
       }
 
-      if ('object' === curType) {
-        output += '\n' // [] {} 加换行
-      } else {
-        output += ' ' // 简单类型 加空格
-      }
+      // if ('object' === curType) {
+      //   outputs.push('\n'); // [] {} 加换行
+      // } else {
+      //   // outputs.push(' '); // 简单类型 加空格
+      // }
     }
 
-    return output;
+    return outputs;
   }
 
   __print (lvl, /** 其他参数 */...theArgs) { // 打印日志
     if (!this.__enabledFor(lvl)) return;
 
     var args = Array.prototype.slice.apply(theArgs)
-    var output = this.__pack(args);
+    var outputs = this.__pack(args);
 
     // 日志过滤器
     let pass = false;
-    this.loggerFilter && (pass = this.loggerFilter.filter(lvl, output));
+    this.loggerFilter && (pass = this.loggerFilter.filter(lvl, outputs));
     if (pass) return;
 
     // 日志格式化
-    this.loggerFormatter && (output = this.loggerFormatter.format(lvl, output))
+    this.loggerFormatter && (outputs = this.loggerFormatter.format(lvl, outputs))
 
     // 日志输出
-    this.delegate && this.delegate[lvl](output);
+    this.delegate && this.delegate[lvl.name](...outputs);
 
     // 日志处理器
-    this.loggerHandler && this.loggerHandler.handle(lvl, output);
+    this.loggerHandler && this.loggerHandler.handle(lvl, outputs);
     
     // 日志入缓存
-    this.enabledCache && loggerDogger.add(lvl, output);
+    this.enabledCache && loggerDogger.add(lvl, outputs);
   }
   
   log () {
@@ -573,7 +575,7 @@ export class Logger {
         '  }',
         '}))'
       ],
-      "格式化输出(不支持)": [
+      "格式化输出(不支持object)": [
         "%s, 字符串",
         "%d/%i, 整数",
         "%f, 浮点数",

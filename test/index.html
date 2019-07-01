@@ -71,7 +71,7 @@
     // 日志过滤
     logger.setFilter(new LoggerFilter({
       filter: (lvl, content) => {
-        if (lvl === Logger.Level.WARN) return true;
+        if (lvl === Logger.WARN) return true;
 
         return false;
       }
@@ -79,8 +79,10 @@
 
     // 日志格式化
     logger.setFormatter(new LoggerFormatter({
-      format: (lvl, content) => {
-        return `已达标, ${content}`;
+      format: (lvl, outputs) => {
+        outputs.unshift('已达标, ')
+        // return `已达标, ${content}`;
+        return outputs;
       }
     }))
 
