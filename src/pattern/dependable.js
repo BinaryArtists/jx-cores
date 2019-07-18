@@ -1,7 +1,7 @@
-import Asyncable from './asyncable';
+import { Asyncable } from './asyncable';
 import { HashMap } from 'jx-structs';
 
-var Dependable = function() {
+export var Dependable = function() {
   this.map = new HashMap();
 };
 
@@ -39,5 +39,3 @@ _inst.when = _inst.is = function(eventName) {
     return asyncable.promisely();
   }
 };
-
-module.exports = _clz;

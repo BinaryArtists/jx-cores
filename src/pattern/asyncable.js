@@ -3,7 +3,7 @@
  * @desc 用作async/await中的阻塞与同志
  */
 var __def_str = '...';
-var Asyncable = function(resolved = false) {
+export var Asyncable = function(resolved = false) {
   if (resolved) {
     this._promise = Promise.resolve(__def_str);
   }
@@ -35,5 +35,3 @@ _inst.then = function(msg = __def_str) {
 _inst.fail = function(msg = __def_str) {
   this.reject(new Error(msg));
 };
-
-module.exports = _clz;

@@ -5,6 +5,7 @@ export class BizError extends Error {
     this.err = err;
     this.msg = msg;
     this.name = name;
+    this.data = {};
   }
 
   named (name) {
@@ -31,11 +32,13 @@ export class BizError extends Error {
   }
 
   static Failure (err, msg) {
-    return new BizError(err, msg)
+    return new BizError(err, msg, '失败返回体');
   }
 
   static Success ( data ) {
-    return new BizError(0, '操作成功')
+    let err = new BizError(0, '操作成功', '成功返回体');
+    err.data = data;
+    return err;
   }
 }
 

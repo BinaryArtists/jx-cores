@@ -165,7 +165,7 @@ export class Logger {
   };
 
   constructor (options) {
-    this.__config(options);
+    this.__config(options || {});
   }
 
   __config (options) {
@@ -291,7 +291,8 @@ export class Logger {
     };
     var removeLastComma = function(output) {
         var lastElement = output[output.length-1];
-        output[output.length-1] = lastElement.substr(0, lastElement.length-1);
+        if (lastElement)
+          output[output.length-1] = lastElement.substr(0, lastElement.length-1);
     };
     var indent = function(numSpaces) {
       return new Array(numSpaces+1).join(' ');

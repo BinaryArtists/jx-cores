@@ -1,6 +1,6 @@
 var __cache__ = null;
 
-function Cachable(key, needDisk = true) {
+export function Cachable(key, needDisk = true) {
   this.key = key;
 
   this.needDisk = needDisk;
@@ -34,5 +34,3 @@ Object.assign(Cachable.prototype, {
     this.needDisk ? __cache__.rm(this.key) : (this.val = null);
   },
 });
-
-export default Cachable;
