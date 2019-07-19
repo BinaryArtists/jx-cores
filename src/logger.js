@@ -449,6 +449,8 @@ export class Logger {
   }
 
   __print (lvl, /** 其他参数 */...theArgs) { // 打印日志
+    // console.info(lvl, theArgs);
+
     if (!this.__enabledFor(lvl)) return;
 
     var args = Array.prototype.slice.apply(theArgs)
@@ -499,9 +501,9 @@ export class Logger {
     this.delegate && this.delegate['dir'](...arguments);
   }
 
-  print () {
-    this.delegate && this.delegate(Logger.ERROR, ...arguments);
-  }
+  // print () {
+  //   this.delegate && this.delegate(Logger.ERROR, ...arguments);
+  // }
 
   // 图片打印
   // bug: 打印出了两张图
@@ -623,19 +625,21 @@ export class Logger {
   static getLogger (name, options) {
     options = options || {};
     options.name = name;
+
+    if (options) {
+      this.defaultOptions = merge(this.defaultOptions, options);
+    }
+
     let logger = contextualLoggersByNameMap[name] || (contextualLoggersByNameMap[name] = new Logger(merge(this.defaultOptions, options)));
 
     return logger;
   }
 
-  static install (S, options={}) {
-    if (options) {
-      this.defaultOptions = merge(this.defaultOptions, options);
-    }
+  static install (S, options) {
 
-    S.$logger = new Logger(options);
+    S.$logger = this.getLogger('default', options);
     if (S.prototype) {
-      S.prototype.$logger = new Logger(options);
+      S.prototype.$logger = this.getLogger('default', options);
     }
   }
 }
