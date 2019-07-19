@@ -628,7 +628,7 @@ export class Logger {
     return logger;
   }
 
-  static install (S, options) {
+  static install (S, options={}) {
     if (options) {
       this.defaultOptions = merge(this.defaultOptions, options);
     }
