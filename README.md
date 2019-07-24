@@ -64,10 +64,10 @@ Cookie
 import {BizEnum, BizEnumGroug} from 'jx-cores';
 
 const SexEnum = {
-  MALE: BizEnum.of(0, '男'),
-  FEMALE: BizEnum.of(1, '女')
+  MALE: BizEnum.$(0, '男'),
+  FEMALE: BizEnum.$(1, '女')
 };
-const SexEnumGroup = BizEnumGroug.of(SexEnum);
+const SexEnumGroup = BizEnumGroug.$(SexEnum);
 
 var type = res.type;
 var sex = SexEnumGroup.valueOf(type);

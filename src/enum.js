@@ -50,6 +50,10 @@ export class BizEnum {
   static of (id, msg) {
     return new BizEnum(id, msg);
   }
+
+  static $ (id, msg) {
+    return this.of(id, msg);
+  }
 }
 
 /**
@@ -99,5 +103,9 @@ export class BizEnumGroup {
       Object.freeze(bizEnums);
 
     return new BizEnumGroup(bizEnums);
+  }
+
+  static $ (bizEnums) {
+    return this.of(bizEnums);
   }
 }
