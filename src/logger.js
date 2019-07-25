@@ -636,10 +636,26 @@ export class Logger {
   }
 
   static install (S, options) {
-
     S.$logger = this.getLogger('default', options);
     if (S.prototype) {
       S.prototype.$logger = this.getLogger('default', options);
+    }
+  }
+}
+
+
+export class LoggerFactory {
+  static getLogger (name, options) {
+    return Logger.getLogger(name, options);
+  }
+
+  /**
+   * 理论上它可以全局控制选项，直接调用Logger.getLogger(name, options)应该是局部控制
+   */
+  static install (S, options) {
+    S.$loggerFactory = new LoggerFactory();
+    if (S.prototype) {
+      S.prototype.$loggerFactory = S.$loggerFactory;
     }
   }
 }
