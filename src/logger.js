@@ -645,7 +645,7 @@ export class Logger {
 
 
 export class LoggerFactory {
-  static getLogger (name, options) {
+  getLogger (name, options) {
     return Logger.getLogger(name, options);
   }
 
