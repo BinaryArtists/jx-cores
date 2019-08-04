@@ -1,3 +1,5 @@
+import { BizEnum, BizEnumGroup } from './enum';
+
 export class BizError extends Error {
   constructor( err = -3.14, msg = '未定义错误', name = '未知业务') {
     super(msg);
@@ -32,6 +34,10 @@ export class BizError extends Error {
   }
 
   static Failure (err, msg) {
+    if (BizEnum.is(err)) {
+      return new BizError(err.id, err.msg, '失败返回体');
+    }
+
     return new BizError(err, msg, '失败返回体');
   }
 
