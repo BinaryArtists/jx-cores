@@ -14,10 +14,10 @@
 
 export class Tracer {
   constructor(options) {
-    options.bizType = 'tmall.sports';
-    options.enableLogging = false;
-    options.chInfo = 'universal';
-    options.extra = {};
+    // options.bizType = 'tmall.sports';
+    // options.enableLogging = false;
+    // options.chInfo = 'universal';
+    // options.extra = {};
   }
 
   /**
