@@ -105,7 +105,7 @@ export class Assert {
     this.string(message, "Custom error message passed to Assert.number needs to be a valid string.");
 
     if (typeof numberValue !== 'number') {
-      throw expected("number", numberValue);
+      throw expected("number", numberValue, message);
     }
   }
 

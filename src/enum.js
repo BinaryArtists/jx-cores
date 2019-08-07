@@ -14,7 +14,7 @@ export class BizEnum {
     this.msg = msg;
 
     // 断言
-    Assert.number(id, 'BizEnum.id 必须为 number');
+    // Assert.number(id, 'BizEnum.id 必须为 number');
     Assert.string(msg, 'BizEnum.msg 必须为 string');
 
     if (Object.freeze)
@@ -23,16 +23,10 @@ export class BizEnum {
 
   /**
    * @desc 枚举等价
-   * @param {id, string} idOrMsg 
+   * @param {number, string} id 
    */
   equal (idOrMsg) {
-    if (typeof idOrMsg === 'number') {
-      return this.id === idOrMsg;
-    } else if (typeof idOrMsg === 'string') {
-      return this.msg === idOrMsg;
-    }
-
-    return false;
+    return this.id == idOrMsg;
   }
 
   /**
@@ -87,7 +81,7 @@ export class BizEnumGroup {
   valueOf (id) {
     for (var k in this.bizEnums) {
       var v = this.bizEnums[k];
-      if (BizEnum.is(v) && v.id === id) {
+      if (BizEnum.is(v) && v.id == id) {
         return v;
       }
     }
