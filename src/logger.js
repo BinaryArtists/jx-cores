@@ -485,6 +485,10 @@ export class Logger {
     this.__print(Logger.DEBUG, ...arguments);
   }
 
+  debug () {
+    this.__print(Logger.DEBUG, ...arguments);
+  }
+
   info () {
     this.__print(Logger.INFO, ...arguments);
   }
