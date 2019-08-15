@@ -4,6 +4,7 @@ export * from './cookie';
 export * from './enum';
 export * from './error';
 export * from './event';
+export * from './inherits';
 export * from './logger';
 export * from './session';
 export * from './signal';
