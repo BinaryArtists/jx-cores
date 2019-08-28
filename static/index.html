@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+</head>
+<body>
+  <script>var exports = {};</script>
+  <script type="text/javascript" src="../dist/async/chain.js"></script>
+  <script type="text/javascript" src="../dist/async/concurrent.js"></script>
+  <script type="text/javascript" src="../dist/async/expire.js"></script>
+  <script type="text/javascript" src="../dist/async/loop.js"></script>
+  <script type="text/javascript">
+    // Chain
+    var chainResult = 100;
+    var chainAction1 = (param) => new Promize((resolve, reject) => {
+      console.log(param);
+      resolve(param);
+    });
+    var chainAction2 = (param) => new Promise((resolve, reject) => {
+      console.log(param);
+
+      resolve(param);
+    });
+    var chainAction3 = (param) => new Promise((resolve, reject) => {
+      console.log(param);
+
+      resolve(param);
+    });
+
+    
+    
+  </script>
+</body>
+</html>

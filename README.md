@@ -146,6 +146,7 @@ Ajax
 
 * 日志级别
 * 模块信息、字段信息与格式
+* profile 使用方法：https://www.jb51.net/article/59128.htm
 
 *重要组件*
 

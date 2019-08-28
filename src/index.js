@@ -8,6 +8,7 @@ export * from './logger';
 export * from './session';
 export * from './signal';
 export * from './storage';
+export * from './try-by';
 
 /**
  * 面向对象设计基本角度
