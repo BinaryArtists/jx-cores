@@ -7,7 +7,7 @@ export class BizError extends Error {
     this.err = err;
     this.msg = msg;
     this.name = name;
-    this.data = {};
+    this.data = null;
   }
 
   named (name) {
@@ -25,9 +25,9 @@ export class BizError extends Error {
 
   is (value) {
     if (typeof value === 'number') {
-      return value == this.err
+      return value == this.err;
     } else if (typeof value === 'string') {
-      return value == this.name
+      return value == this.name;
     }
 
     return false;
