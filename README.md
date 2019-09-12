@@ -2,6 +2,11 @@
 * _ 开头：protected
 * __ 开头：private
 
+TODO
+---
+
+- [] ts注解，支持function log打印，property log打印等
+
 
 断言
 ---
