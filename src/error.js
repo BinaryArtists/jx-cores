@@ -1,38 +1,31 @@
 import { BizEnum, BizEnumGroup } from './enum';
 
+// 统一解包: let { err, msg, data, biz } = obj;
+
+/**
+ * 业务错误
+ */
 export class BizError extends Error {
-  constructor( err = -3.14, msg = '未定义错误', name = '未知业务') {
+  constructor( err = -3.14, msg = '未定义错误', biz = '未知业务') {
     super(msg);
 
     this.err = err;
     this.msg = msg;
-    this.name = name;
+    this.biz = biz;
     this.data = null;
-  }
-
-  named (name) {
-    this.name = name;
-    return this;
-  }
-  err (err) { 
-    this.err = err
-    return this;
-  }
-  msg (msg) { 
-    this.msg = msg;
-    return this;
   }
 
   is (value) {
     if (typeof value === 'number') {
       return value == this.err;
     } else if (typeof value === 'string') {
-      return value == this.name;
+      return value == this.biz;
     }
 
     return false;
   }
 
+  /** [已废弃] */
   static Failure (err, msg) {
     if (BizEnum.is(err)) {
       return new BizError(err.id, err.msg, '失败返回体');
@@ -41,6 +34,7 @@ export class BizError extends Error {
     return new BizError(err, msg, '失败返回体');
   }
 
+  /** [已废弃] */
   static Success ( data ) {
     let err = new BizError(0, '操作成功', '成功返回体');
     err.data = data;
@@ -49,8 +43,24 @@ export class BizError extends Error {
 }
 
 /**
- * @desc api无法使用错误
- * @param {string} apiname api名字
+ * 业务返回体
  */
-export const APINotSupportedError = (apiname) => 
-  new BizError(-1000, `当前版本过低，无法使用${apiname ? apiname : '某功能'}，请升级`, 'APINotSupportedError');
+export class BizResult extends BizError {
+  constructor (data = null, msg = '未定义返回', biz = '未知业务') {
+    super(null, msg, biz);
+
+    this.data = data;
+  }
+
+  static Err (err, msg) {
+    if (BizEnum.is(err)) {
+      return new BizError(err.id, err.msg);
+    }
+
+    return new BizError(err, msg);
+  }
+
+  static Ok ( data ) {
+    return new BizResult(data, '操作成功');
+  }
+}

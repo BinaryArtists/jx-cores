@@ -1,7 +1,7 @@
 import { Assert } from './assert';
 
 /**
- * @desc 枚举
+ * 枚举
  */
 export class BizEnum {
   /**
@@ -22,7 +22,8 @@ export class BizEnum {
   }
 
   /**
-   * @desc 枚举等价
+   * 枚举等价
+   * 
    * @param {number, string} id 
    */
   equal (idOrMsg) {
@@ -30,14 +31,15 @@ export class BizEnum {
   }
 
   /**
-   * @desc 鸭子类型 长得像/叫的像，那就是了。
+   * 鸭子类型 长得像/叫的像，那就是了。
    */
   static is (bizEnumOrNot) {
     return bizEnumOrNot.id != undefined && bizEnumOrNot.msg != undefined;
   }
   
   /**
-   * @desc 枚举便携构造
+   * 枚举便携构造
+   * 
    * @param {int} id 
    * @param {string} msg 
    */
@@ -51,7 +53,7 @@ export class BizEnum {
 }
 
 /**
- * @desc 枚举组
+ * 枚举组
  */
 export class BizEnumGroup {
   constructor (bizEnums) {
@@ -59,7 +61,7 @@ export class BizEnumGroup {
   }
 
   /**
-   * @desc 获取该枚举所有组合
+   * 获取该枚举所有组合
    */
   values () {
     let values = [];
@@ -74,7 +76,7 @@ export class BizEnumGroup {
   }
 
   /**
-   * @desc 获取指定id的枚举对象
+   * 获取指定id的枚举对象
    * 
    * @param {int} id 
    */
@@ -90,7 +92,7 @@ export class BizEnumGroup {
   }
 
   /**
-   * @desc 枚举组便携构造函数
+   * 枚举组便携构造函数
    */
   static of(bizEnums) {
     if (Object.freeze)
